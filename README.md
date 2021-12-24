@@ -10,5 +10,6 @@
 
 
 ## SampleImages
-![alt text](https://github.com/yamil-90
+![screenshot 1](https://github.com/yamil-90/appointments-app/blob/main/assets/screenshot1.png?raw=true)
+![screenshot 2](https://github.com/yamil-90/appointments-app/blob/main/assets/screenshot2.png?raw=true)
 
