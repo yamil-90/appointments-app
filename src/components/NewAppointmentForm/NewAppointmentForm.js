@@ -3,18 +3,41 @@ import { StyleSheet, Text, View, Modal, Pressable, SafeAreaView, TextInput, Scro
 import DatePicker from 'react-native-date-picker';
 
 const NewAppointmentForm = (props) => {
-  const { isVisible, setIsVisible, patients, setPatients } = props;
+  const { 
+    isVisible, 
+    setIsVisible, 
+    patients, 
+    setPatients, 
+    patient: patientObj, 
+    setPatient: setPatientObj 
+  } = props;
   const [patient, setPatient] = useState('');
-  const [doctor, setDoctor] = useState('');
+  const [id, setId] = useState('');
+  const [owner, setOwner] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [symptoms, setSymptoms] = useState('');
   const [date, setDate] = useState(new Date())
 
+  useEffect(() => {
+    console.log('useef');
+    if (Object.keys(patientObj).length > 0) {
+      console.log('patient obj es ...........', patientObj.patient);
+      setId(patientObj.id)
+      setPatient(patientObj.patient)
+      setOwner(patientObj.owner)
+      setEmail(patientObj.email)
+      setPhone(patientObj.phone)
+      setSymptoms(patientObj.symptoms)
+      setDate(patientObj.date)
+    } else {
+      console.log('not patientobj');
+    }
+  }, [patientObj, isVisible])
 
   const handleSubmit = () => {
     console.log('agregar paciente');
-    if ([patient, doctor, email, symptoms, date].includes('')) {
+    if ([patient, owner, email, symptoms, date].includes('')) {
       Alert.alert(
         'Error',
         'Todos los campos son obligatorios',
@@ -22,24 +45,41 @@ const NewAppointmentForm = (props) => {
       )
       return
     }
+
     const newPatient = {
-      id: Date.now(),
       patient,
-      doctor,
+      owner,
       email,
       phone,
       symptoms,
       date
     }
-    setPatients([...patients, newPatient])
+    if (!id) {
+      newPatient.id = Date.now()
+      setPatients([...patients, newPatient])
+      console.log('nueva entrada');
+    } else {
+      newPatient.id = id;
+      const newPatientsArray = patients.map((patientState) => {
+         return patientState.id === newPatient.id ?
+          newPatient :
+          patientState
+      })
+      setPatients(newPatientsArray)
+      setPatientObj({})
+      console.log('editando', newPatientsArray);
+    }
+    setId('')
     setPatient('');
     setPhone('');
     setSymptoms('');
     setDate(new Date());
-    setDoctor('');
+    setOwner('');
     setEmail('')
     setIsVisible(!isVisible)
+
   }
+
 
 
   return (
@@ -52,14 +92,25 @@ const NewAppointmentForm = (props) => {
       >
         <ScrollView
           keyboardShouldPersistTaps='always'>
-          <Text style={styles.title}>New {''}
+          <Text style={styles.title}>{patientObj.id? 'Edit':'New'} {''}
             <Text style={styles.boldTitle}>Appointment</Text>
           </Text>
           <Pressable
             style={styles.btnCancel}
-            onPress={() => setIsVisible(false)}
+            onPress={() => {
+              setId('')
+              setPatient('');
+              setPhone('');
+              setSymptoms('');
+              setDate(new Date());
+              setOwner('');
+              setEmail('')
+              setPatient({})
+              setPatientObj({})
+              setIsVisible(false)
+            }}
           >
-            <Text style={styles.btnCancelText}>X Cancel</Text>
+            <Text style={styles.btnCancelText}>Cancel</Text>
           </Pressable>
           <View style={styles.formField}>
             <Text style={styles.label}>Patient's name</Text>
@@ -73,18 +124,18 @@ const NewAppointmentForm = (props) => {
             />
           </View>
           <View style={styles.formField}>
-            <Text style={styles.label}>Doctor's name</Text>
+            <Text style={styles.label}>Owner's name</Text>
             <TextInput
               style={styles.input}
-              placeholder="Doctor's name"
+              placeholder="Owner's name"
               placeholderTextColor={'#666'}
-              value={doctor}
-              onChangeText={setDoctor}
+              value={owner}
+              onChangeText={setOwner}
 
             />
           </View>
           <View style={styles.formField}>
-            <Text style={styles.label}>Doctor's Email</Text>
+            <Text style={styles.label}>Owner's Email</Text>
             <TextInput
               style={styles.input}
               placeholder="Email"
@@ -95,7 +146,7 @@ const NewAppointmentForm = (props) => {
 
             /></View>
           <View style={styles.formField}>
-            <Text style={styles.label}>Doctor's Phone number</Text>
+            <Text style={styles.label}>Owner's Phone number</Text>
             <TextInput
               style={styles.input}
               placeholder="Phone number"
@@ -133,7 +184,7 @@ const NewAppointmentForm = (props) => {
             style={styles.btnAdd}
             onPress={() => handleSubmit()}
           >
-            <Text style={styles.btnAddText}>Add Patient</Text>
+            <Text style={styles.btnAddText}>{patientObj.id? 'Edit':'Add'} Patient</Text>
           </Pressable>
 
         </ScrollView>

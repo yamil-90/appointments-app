@@ -18,27 +18,49 @@ import {
   Modal,
   ScrollView,
   TextInput,
-  FlatList
+  FlatList,
+  Alert
 } from 'react-native';
 
 import NewAppointmentForm from './src/components/NewAppointmentForm';
 import Patient from './src/components/Patient';
-
+import PatientDetail from './src/components/PatientDetail/PatientDetail';
 
 const App = () => {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false);
+  const [patientDetailVisible, setPatientDetailVisible] = useState(false)
   const [patients, setPatients] = useState([])
   const [patient, setPatient] = useState({})
-
-  const nameOfBusiness = "yamil";
+  // console.log('los pacientes son', patients)
+  const nameOfBusiness = "Veterinary";
   const newAppointmentHandler = () => {
     console.log('new Appointment')
     setIsVisible(true);
   }
 
-  const editPatient = (id) =>{
-    const patientEdit =patients.filter(patient=> patient.id===id)
-  setPatient(patientEdit[0])
+  const editPatient = (id) => {
+    const patientEdit = patients.filter(patient => patient.id === id)
+    setPatient(patientEdit[0])
+  }
+  const deletePatient = (id) => {
+    Alert.alert(
+      'Are you sure?',
+      'deletion is permanent',
+
+      [
+        { text: 'cancel' },
+        {
+          text: 'Delete', onPress: () => {
+
+            const deletedArray = patients.filter(patientState => {
+              return patientState.id !== id
+            })
+            setPatients(deletedArray)
+          }
+        }
+      ]
+    )
+
   }
 
   return (
@@ -58,21 +80,31 @@ const App = () => {
         setIsVisible={setIsVisible}
         setPatients={setPatients}
         patients={patients}
+        patient={patient}
+        setPatient={setPatient}
+      />
+      <PatientDetail
+        patientDetailVisible={patientDetailVisible}
+        setPatientDetailVisible={setPatientDetailVisible}
+        patient={patient}
       />
       {patients.length === 0 ?
         <Text style={styles.noPatients}>no patients</Text> :
         <View>
           <FlatList
-          style={styles.list}
+            style={styles.list}
             data={patients}
             keyExtractor={(item) => item.id}
-            renderItem={({item}) => {
+            renderItem={({ item }) => {
               return (
-              <Patient 
-              item={item} 
-              setIsVisible={setIsVisible} 
-              editPatient={editPatient}
-              />
+                <Patient
+                  item={item}
+                  setIsVisible={setIsVisible}
+                  editPatient={editPatient}
+                  deletePatient={deletePatient}
+                  setPatientDetailVisible={setPatientDetailVisible}
+                  setPatient={setPatient}
+                />
               )
             }}
           />
@@ -107,7 +139,7 @@ const styles = StyleSheet.create({
   titleBold: {
     textTransform: 'uppercase',
     fontSize: 30,
-    fontWeight: '900',
+    fontWeight: '700',
     color: '#00a680'
   },
   btnNewAppointment: {
@@ -130,8 +162,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20
   },
-  list:{
-    marginTop:40,
-    marginHorizontal:30
+  list: {
+    marginTop: 40,
+    marginHorizontal: 30
   }
 })
