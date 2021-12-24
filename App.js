@@ -75,7 +75,8 @@ const App = () => {
       >
         <Text style={styles.newAppointmentText}>New Appointment</Text>
       </Pressable>
-      <NewAppointmentForm
+      {isVisible&&(
+        <NewAppointmentForm
         isVisible={isVisible}
         setIsVisible={setIsVisible}
         setPatients={setPatients}
@@ -83,11 +84,14 @@ const App = () => {
         patient={patient}
         setPatient={setPatient}
       />
+      )}
+      {patientDetailVisible && 
       <PatientDetail
         patientDetailVisible={patientDetailVisible}
         setPatientDetailVisible={setPatientDetailVisible}
         patient={patient}
-      />
+        setPatient={setPatient}
+      />}
       {patients.length === 0 ?
         <Text style={styles.noPatients}>no patients</Text> :
         <View>

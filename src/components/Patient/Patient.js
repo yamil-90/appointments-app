@@ -1,14 +1,11 @@
 import React from 'react'
 import { StyleSheet, Text, View, Pressable } from 'react-native'
+import {formatDate} from '../../helpers/index'
+
 
 const Patient = ({setPatient, setPatientDetailVisible, item, setIsVisible, editPatient, deletePatient}) => {
     const { patient, date, id,  } = item;
-    const formatDate = (date) => {
-        const newDate = new Date(date);
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return newDate.toLocaleDateString('en-US', options)
-
-    }
+    
     return (
         <Pressable
         onPress={()=>{
